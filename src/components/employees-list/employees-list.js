@@ -4,14 +4,23 @@ import './employees-list.css';
 
 
 
-const EmployeesList = ({data}) => {
+const EmployeesList = ({data, onDelete, onToggleIncrease, onToggleLiked}) => {
+
+    
     
     const elements = data.map(item => {
+        const {id, ...itemProps} = item;
         return (
-            <EmployeesListItem {...item}/>
+            <EmployeesListItem 
+                key={id} 
+                {...itemProps}
+                onDelete={() => onDelete(id)}
+                onToggleIncrease= {() => onToggleIncrease(id)}
+                onToggleLiked = {() => onToggleLiked(id)}/>
         )
     })
 
+    console.log(elements)
     return (
         <ul className="app-list list-group">
             {elements}
