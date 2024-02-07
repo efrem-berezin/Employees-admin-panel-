@@ -15,10 +15,11 @@ class App extends Component {
     super(props);
     this.state = { 
       data: [
-        {name: 'John C.', surname:'Tener', salary: 5000, increase: true, liked:true,  id: 1  },
+        {name: 'John C.', surname:'Tener', salary: 5000, increase: false, liked:false,  id: 1  },
         {name: 'Bob K.', surname:'Potter', salary: 3000, increase: false, liked:false, id: 2  },
         {name: 'Kate S.', surname:'Pinter', salary: 19000, increase: false,liked:false, id: 3  }
-      ]
+      ],
+      term:''
     } 
     this.maxId = 4;
   }
@@ -31,7 +32,7 @@ class App extends Component {
   }
 
 
-  onAdd = (name, salary) => {
+  addItem = (name, salary) => {
     const newItem = {
       name, 
       salary,
@@ -47,40 +48,63 @@ class App extends Component {
     });
   }
 
-  onToggleIncrease = (id) => {
+  onToggleProp = (id, prop) => {
     this.setState(({data}) => ({
       data: data.map(item => {
-        if (item.id === id) {
-          return {...item, increase: !item.increase}
+        if (item.id === id){
+          return {...item, [prop]: !item[prop]}
         }
         return item;
       })
     }))
   }
+  
+  // searchEmp = (items, term) => {
+  //   if (term.length === 0) {
+  //     return items;
+  //   }
+    
+  //   return items.filter(item => {
+  //     return item.name.indexOf(term)  > -1
+  //   })
+  // }
 
-  onToggleLiked = (id) => {
-    console.log(`this is liked ${id}`)
+  searchEmp = (items, term) => {
+    if(items.length === 0) {
+      return items;
+    }
+    return items.filter(item => {
+      return item.name.indexOf(term) > -1
+    })
+    
   }
 
+  onUpdateSearch = (term) => {
+    this.setState({term :term})
+  }
+  
 
   render () {
-    
-    
+    const {data, term} = this.state;
+    const allEmployee = this.state.data.length;
+    const increaseEmployee = this.state.data.filter(item => item.increase).length;
+    const visiableData = this.searchEmp(data, term);
+
     return (
       <div className="app">
-          <AppInfo />
+          <AppInfo allEmployee={allEmployee} increaseEmployee={increaseEmployee} />
   
           <div className="search-panel">
-              <SearchPanel/>
+              <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
               <AppFilter/>
           </div>
           
           <EmployeesList 
-          data= {this.state.data}
+          data= {visiableData}
           onDelete = {this.deleteItem}
-          onToggleIncrease={this.onToggleIncrease}
-          onToggleLiked={this.onToggleLiked}/>
-          <EmployeesAddForm onAdd={this.onAdd}/>
+          onToggleProp={this.onToggleProp}
+          />
+          <EmployeesAddForm onAdd={this.addItem}/>
       </div>
     );
   }
