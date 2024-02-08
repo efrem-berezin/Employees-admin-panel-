@@ -16,10 +16,11 @@ class App extends Component {
     this.state = { 
       data: [
         {name: 'John C.', surname:'Tener', salary: 5000, increase: false, liked:false,  id: 1  },
-        {name: 'Bob K.', surname:'Potter', salary: 3000, increase: false, liked:false, id: 2  },
+        {name: 'Bob K.', surname:'Potter', salary: 3000, increase: false, liked:true, id: 2  },
         {name: 'Kate S.', surname:'Pinter', salary: 19000, increase: false,liked:false, id: 3  }
       ],
-      term:''
+      term:'',
+      filter: 'liked'
     } 
     this.maxId = 4;
   }
@@ -59,36 +60,40 @@ class App extends Component {
     }))
   }
   
-  // searchEmp = (items, term) => {
-  //   if (term.length === 0) {
-  //     return items;
-  //   }
-    
-  //   return items.filter(item => {
-  //     return item.name.indexOf(term)  > -1
-  //   })
-  // }
+  
+
+  onUpdateSearch = (term) => {
+    this.setState({term : term})
+  }
+  
 
   searchEmp = (items, term) => {
-    if(items.length === 0) {
+    if(term.length === 0 ){
       return items;
     }
     return items.filter(item => {
       return item.name.indexOf(term) > -1
     })
-    
-  }
-
-  onUpdateSearch = (term) => {
-    this.setState({term :term})
   }
   
+  filterPost = (items, filter) => {
+    switch (filter) {
+      case 'liked':
+        return items.filter(item => item.liked);
+      case 'increase':
+        return items.filter(item => item.increase);
+      default:
+        return items
+    }
+  }
+
 
   render () {
-    const {data, term} = this.state;
+    const {data, term, filter} = this.state;
     const allEmployee = this.state.data.length;
     const increaseEmployee = this.state.data.filter(item => item.increase).length;
-    const visiableData = this.searchEmp(data, term);
+    const visiableData = this.filterPost(this.searchEmp(data, term), filter);
+
 
     return (
       <div className="app">
